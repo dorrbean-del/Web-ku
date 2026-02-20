@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Website Ramadhan SMPN 2 Cisolok</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    margin:0;
+    background:#f4f6f9;
+}
+
+header{
+    background:#0f4c81;
+    color:white;
+    text-align:center;
+    padding:20px;
+}
+
+section{
+    padding:20px;
+}
+
+form{
+    background:white;
+    padding:20px;
+    border-radius:8px;
+    box-shadow:0 2px 5px rgba(0,0,0,0.1);
+}
+
+input, select, textarea{
+    width:100%;
+    padding:10px;
+    margin:8px 0;
+    border-radius:6px;
+    border:1px solid #ccc;
+}
+
+button{
+    background:#0f4c81;
+    color:white;
+    padding:10px;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#083358;
+}
+
+.card{
+    background:white;
+    padding:15px;
+    margin-top:15px;
+    border-radius:8px;
+    box-shadow:0 2px 5px rgba(0,0,0,0.1);
+}
+
+footer{
+    text-align:center;
+    background:#0f4c81;
+    color:white;
+    padding:15px;
+    margin-top:20px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>SMPN 2 Cisolok</h1>
+<p>Website Kegiatan Ramadhan Siswa</p>
+</header>
+
+<section>
+<h2>Isi Kegiatan Ramadhan Kamu</h2>
+
+<form id="formKegiatan">
+    <label>Nama Siswa</label>
+    <input type="text" id="nama" required>
+
+    <label>Kelas</label>
+    <select id="kelas">
+        <option>7A</option>
+        <option>7B</option>
+        <option>7C</option>
+        <option>7D</option>
+        <option>7E</option>
+        <option>8A</option>
+        <option>8B</option>
+        <option>8C</option>
+        <option>9A</option>
+        <option>9B</option>
+        <option>9C</option>
+    </select>
+
+    <label>Kegiatan Ramadhan</label>
+    <textarea id="kegiatan" rows="4" required></textarea>
+
+    <label>Pesan / Harapan</label>
+    <textarea id="pesan" rows="3"></textarea>
+
+    <button type="submit">Kirim</button>
+</form>
+
+<h2>Hasil Kiriman Siswa</h2>
+<div id="hasil"></div>
+
+</section>
+
+<footer>
+<p>© 2026 SMPN 2 Cisolok - Ramadhan Berkah</p>
+</footer>
+
+<script>
+document.getElementById("formKegiatan").addEventListener("submit", function(e){
+    e.preventDefault();
+
+    let nama = document.getElementById("nama").value;
+    let kelas = document.getElementById("kelas").value;
+    let kegiatan = document.getElementById("kegiatan").value;
+    let pesan = document.getElementById("pesan").value;
+
+    let card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+        <h3>${nama} (${kelas})</h3>
+        <p><strong>Kegiatan:</strong> ${kegiatan}</p>
+        <p><strong>Pesan:</strong> ${pesan}</p>
+    `;
+
+    document.getElementById("hasil").appendChild(card);
+
+    document.getElementById("formKegiatan").reset();
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Ramadhan - SMPN 2 CISOLOK</title>
+    <!-- Font Ramah Anak -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Library html2canvas untuk generate sheet -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #059669; /* Hijau Islami */
+            --primary-light: #10b981;
+            --secondary: #2563eb; /* Biru */
+            --bg-color: #ecfdf5; /* Background Hijau Muda */
+            --white: #ffffff;
+            --text-dark: #1f2937;
+            --text-gray: #6b7280;
+            --border: #d1d5db;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            padding-bottom: 50px;
+        }
+
+        /* Container Aplikasi */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header UI */
+        .app-header {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 24px;
+            border-top: 6px solid var(--primary);
+        }
+
+        .app-header img {
+            height: 80px;
+            margin-bottom: 10px;
+        }
+
+        .app-header h1 {
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .app-header p {
+            font-size: 0.9rem;
+            color: var(--text-gray);
+        }
+
+        /* Form Card Styling */
+        .card {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            border-left: 5px solid var(--secondary);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+            font-weight: 800;
+            border-bottom: 2px dashed #e5e7eb;
+            padding-bottom: 8px;
+        }
+
+        /* Input Styling */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            background-color: #f0fdfa;
+        }
+
+        /* Radio Button Groups */
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        
+        input[type="radio"] {
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+
+        /* Table Sholat */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .sholat-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 300px;
+        }
+
+        .sholat-table th {
+            background-color: var(--primary);
+            color: white;
+            padding: 10px;
+            font-size: 0.9rem;
+        }
+
+        .sholat-table td {
+            border-bottom: 1px solid #e5e7eb;
+            padding: 12px 8px;
+            text-align: center;
+        }
+        
+        .sholat-table td:first-child {
+            text-align: left;
+            font-weight: bold;
+        }
+
+        /* Tadarus Conditional */
+        #tadarus_detail {
+            display: none;
+            background-color: #f3f4f6;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        /* Canvas Signature */
+        .sig-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .sig-container {
+                flex-direction: row;
+            }
+        }
+
+        .sig-box {
+            flex: 1;
+            text-align: center;
+        }
+
+        canvas {
+            border: 2px dashed var(--text-gray);
+            border-radius: 8px;
+            background: #f9fafb;
+            cursor: crosshair;
+            touch-action: none; /* Penting untuk mobile */
+            width: 100%;
+            height: 150px;
+        }
+
+        .btn-clear {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            cursor: pointer;
+        }
+
+        /* Main Button */
+        .btn-submit {
+            background: var(--primary);
+            color: white;
+            width: 100%;
+            padding: 16px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(5, 150, 105, 0.3);
+            transition: transform 0.1s;
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        /* =========================================
+           SHEET A4 Template (Hidden from View)
+           ========================================= */
+        #sheet-report {
+            position: absolute;
+            left: -9999px;
+            top: 0;
+            width: 794px; /* A4 width at 96 DPI */
+            min-height: 1123px; /* A4 height */
+            background: white;
+            padding: 40px 50px;
+            font-family: 'Times New Roman', Times, serif; /* Formal font */
+            color: black;
+            box-sizing: border-box;
+        }
+
+        .sheet-header {
+            display: flex;
+            align-items: center;
+            border-bottom: 3px double black;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .sheet-header img {
+            width: 100px;
+            height: auto;
+            margin-right: 20px;
+        }
+
+        .sheet-header div {
+            text-align: center;
+            width: 100%;
+        }
+
+        .sheet-header h2 {
+            margin: 0;
+            font-size: 24px;
+            text-transform: uppercase;
+        }
+
+        .sheet-header p {
+            margin: 5px 0 0;
+            font-size: 14px;
+        }
+
+        .sheet-title {
+            text-align: center;
+            font-weight: bold;
+            text-decoration: underline;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .sheet-section {
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .sheet-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 15px;
+        }
+
+        .sheet-table th, .sheet-table td {
+            border: 1px solid black;
+            padding: 6px 10px;
+        }
+
+        .sheet-table th {
+            background-color: #e5e5e5;
+            text-align: center;
+        }
+
+        .sheet-sig-area {
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
+            page-break-inside: avoid;
+        }
+
+        .sheet-sig-box {
+            width: 250px;
+            text-align: center;
+        }
+
+        .sheet-sig-img {
+            height: 80px;
+            width: auto;
+            display: block;
+            margin: 0 auto;
+            border-bottom: 1px solid black;
+        }
+
+        .sheet-footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 12px;
+            font-style: italic;
+            border-top: 1px solid #ccc;
+            padding-top: 10px;
+        }
+
+        /* Modal Preview */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            text-align: center;
+            position: relative;
+        }
+
+        .modal-img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            margin-bottom: 15px;
+        }
+
+        .btn-download {
+            background: var(--secondary);
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 30px;
+            cursor: pointer;
+            color: #333;
+        }
+
+        /* Loading Spinner */
+        #loading {
+            display: none;
+            text-align: center;
+            margin-top: 10px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Header Aplikasi -->
+        <header class="app-header">
+            <img src="https://i.imgur.com/qKGEEVc.jpeg" alt="Logo Sekolah">
+            <h1>Laporan Kegiatan Ramadhan</h1>
+            <p><strong>SMPN 2 CISOLOK</strong></p>
+            <p>Kp. Pasir Talaga RT.04/06 Desa Cicadas Kec. Cisolok - Sukabumi 43366</p>
+        </header>
+
+        <form id="ramadhanForm">
+            <!-- A. Data Siswa -->
+            <div class="card">
+                <h3 class="section-title">A. Data Siswa</h3>
+                <div class="form-group">
+                    <label>Nama Siswa</label>
+                    <input type="text" id="f_nama" placeholder="Nama Lengkap Siswa" required>
+                </div>
+                <div class="form-group">
+                    <label>Nama Orang Tua/Wali</label>
+                    <input type="text" id="f_ortu" placeholder="Nama Orang Tua" required>
+                </div>
+                <div class="form-group">
+                    <label>Kelas</label>
+                    <select id="f_kelas" required>
+                        <option value="">-- Pilih Kelas --</option>
+                        <option value="VII A">Kelas VII A</option>
+                        <option value="VII B">Kelas VII B</option>
+			<option value="VII C">Kelas VII C</option>
+			<option value="VII D">Kelas VII D</option>
+                        <option value="VIII A">Kelas VIII A</option>
+			<option value="VIII B">Kelas VIII B</option>
+			<option value="VIII C">Kelas VIII C</option>
+			<option value="VIII D">Kelas VIII D</option>
+                        <option value="IX A">Kelas IX A</option>
+                        <option value="IX B">Kelas IX B</option>
+                        <option value="IX C">Kelas IX C</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Tanggal</label>
+                    <input type="date" id="f_tanggal" required>
+                </div>
+                <div class="form-group">
+                    <label>Ramadhan Hari ke-</label>
+                    <input type="number" id="f_hari" placeholder="Contoh: 1" required min="1" max="30">
+                </div>
+            </div>
+
+            <!-- B. Laporan Sholat -->
+            <div class="card">
+                <h3 class="section-title">B. Laporan Sholat Wajib & Tarawih</h3>
+                <p style="font-size:0.85rem; color:#666; margin-bottom:10px;">
+                    *Ket: <b>SJ</b> (Jamaah), <b>SS</b> (Sendiri), <b>TS</b> (Tidak Sholat)
+                </p>
+                <div class="table-responsive">
+                    <table class="sholat-table">
+                        <thead>
+                            <tr>
+                                <th>Sholat</th>
+                                <th>SJ</th>
+                                <th>SS</th>
+                                <th>TS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Generated by JS for cleaner code -->
+                            <script>
+                                const sholatList = ['Subuh', 'Dzuhur', 'Ashar', 'Maghrib', 'Isya', 'Tarawih'];
+                                sholatList.forEach(s => {
+                                    document.write(`
+                                    <tr>
+                                        <td>${s}</td>
+                                        <td><input type="radio" name="sholat_${s}" value="SJ" required></td>
+                                        <td><input type="radio" name="sholat_${s}" value="SS"></td>
+                                        <td><input type="radio" name="sholat_${s}" value="TS"></td>
+                                    </tr>
+                                    `);
+                                });
+                            </script>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- C & D. Sahur & Puasa -->
+            <div class="card">
+                <h3 class="section-title">C & D. Sahur & Puasa</h3>
+                <div class="form-group">
+                    <label>Apakah kamu Makan Sahur?</label>
+                    <div class="radio-group">
+                        <label class="radio-item"><input type="radio" name="sahur" value="Iya" required> Iya</label>
+                        <label class="radio-item"><input type="radio" name="sahur" value="Tidak"> Tidak</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Apakah kamu Berpuasa hari ini?</label>
+                    <div class="radio-group">
+                        <label class="radio-item"><input type="radio" name="puasa" value="Iya" required> Iya</label>
+                        <label class="radio-item"><input type="radio" name="puasa" value="Tidak"> Tidak</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- E. Tadarus -->
+            <div class="card">
+                <h3 class="section-title">E. Tadarus Al-Qur'an</h3>
+                <div class="form-group">
+                    <label>Apakah kamu Tadarus hari ini?</label>
+                    <div class="radio-group">
+                        <label class="radio-item"><input type="radio" name="tadarus" value="Iya" onclick="toggleTadarus(true)" required> Iya</label>
+                        <label class="radio-item"><input type="radio" name="tadarus" value="Tidak" onclick="toggleTadarus(false)"> Tidak</label>
+                    </div>
+                </div>
+                <div id="tadarus_detail">
+                    <div class="form-group">
+                        <label>Nama Surat</label>
+                        <input type="text" id="f_surat" placeholder="Contoh: Al-Baqarah">
+                    </div>
+                    <div style="display:flex; gap:10px;">
+                        <div class="form-group" style="flex:1">
+                            <label>Ayat Ke-</label>
+                            <input type="number" id="f_ayat_start">
+                        </div>
+                        <div class="form-group" style="flex:1">
+                            <label>Sampai</label>
+                            <input type="number" id="f_ayat_end">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- F. Kuliah Subuh -->
+            <div class="card">
+                <h3 class="section-title">F. Laporan Kuliah Subuh / Kultum</h3>
+                <div class="form-group">
+                    <label>Nama Penceramah</label>
+                    <input type="text" id="f_penceramah" placeholder="Opsional jika tidak ada">
+                </div>
+                <div class="form-group">
+                    <label>Tempat (Masjid/Musholla/TV)</label>
+                    <input type="text" id="f_tempat">
+                </div>
+                <div class="form-group">
+                    <label>Ringkasan Isi Ceramah</label>
+                    <textarea id="f_ceramah" rows="3" placeholder="Tulis ringkasan singkat..."></textarea>
+                </div>
+            </div>
+
+            <!-- G. Tanda Tangan -->
+            <div class="card">
+                <h3 class="section-title">G. Tanda Tangan</h3>
+                <div class="sig-container">
+                    <div class="sig-box">
+                        <label>TTD Siswa</label>
+                        <canvas id="canvas_siswa"></canvas>
+                        <button type="button" class="btn-clear" onclick="clearCanvas('canvas_siswa')">Hapus</button>
+                    </div>
+                    <div class="sig-box">
+                        <label>TTD Orang Tua</label>
+                        <canvas id="canvas_ortu"></canvas>
+                        <button type="button" class="btn-clear" onclick="clearCanvas('canvas_ortu')">Hapus</button>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" class="btn-submit" onclick="generateSheet()">Unduh Laporan 📥</button>
+            <div id="loading">Sedang memproses laporan...</div>
+        </form>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- TEMPLATE SHEET A4 (HIDDEN) -->
+    <!-- ============================================== -->
+    <div id="sheet-report">
+        <div class="sheet-header">
+            <img src="https://i.imgur.com/qKGEEVc.jpeg" alt="Logo" crossorigin="anonymous">
+            <div>
+                <h2>SMPN 2 CISOLOK</h2>
+                <p>Kp. Pasir Talaga RT.04/06 Desa Cicadas Kecamatan Cisolok - Sukabumi 43366</p>
+            </div>
+        </div>
+
+        <div class="sheet-title">LAPORAN KEGIATAN HARIAN RAMADHAN</div>
+
+        <div class="sheet-section">
+            <strong>A. IDENTITAS SISWA</strong>
+            <table class="sheet-table" style="margin-top:5px;">
+                <tr><td width="30%">Nama Siswa</td><td id="out_nama"></td></tr>
+                <tr><td>Nama Orang Tua</td><td id="out_ortu"></td></tr>
+                <tr><td>Kelas</td><td id="out_kelas"></td></tr>
+                <tr><td>Hari / Tanggal</td><td id="out_tanggal"></td></tr>
+                <tr><td>Ramadhan Ke-</td><td id="out_hari"></td></tr>
+            </table>
+        </div>
+
+        <div class="sheet-section">
+            <strong>B. LAPORAN IBADAH SHOLAT</strong>
+            <table class="sheet-table" style="margin-top:5px;">
+                <tr>
+                    <th>Sholat</th><th>Subuh</th><th>Dzuhur</th><th>Ashar</th><th>Maghrib</th><th>Isya</th><th>Tarawih</th>
+                </tr>
+                <tr style="text-align:center;">
+                    <td style="text-align:left;">Status</td>
+                    <td id="out_sholat_Subuh"></td>
+                    <td id="out_sholat_Dzuhur"></td>
+                    <td id="out_sholat_Ashar"></td>
+                    <td id="out_sholat_Maghrib"></td>
+                    <td id="out_sholat_Isya"></td>
+                    <td id="out_sholat_Tarawih"></td>
+                </tr>
+            </table>
+            <p style="font-size:12px; margin-top:5px;">*SJ: Sholat Jamaah, SS: Sholat Sendiri, TS: Tidak Sholat</p>
+        </div>
+
+        <div class="sheet-section">
+            <strong>C & D. SAHUR DAN PUASA</strong>
+            <table class="sheet-table" style="margin-top:5px;">
+                <tr><td width="40%">Makan Sahur</td><td id="out_sahur"></td></tr>
+                <tr><td>Berpuasa</td><td id="out_puasa"></td></tr>
+            </table>
+        </div>
+
+        <div class="sheet-section">
+            <strong>E. TADARUS AL-QUR'AN</strong>
+            <table class="sheet-table" style="margin-top:5px;">
+                <tr><td width="40%">Melaksanakan Tadarus</td><td id="out_tadarus"></td></tr>
+                <tr><td>Surat / Ayat</td><td id="out_detail_tadarus">-</td></tr>
+            </table>
+        </div>
+
+        <div class="sheet-section">
+            <strong>F. KULIAH SUBUH / CERAMAH</strong>
+            <table class="sheet-table" style="margin-top:5px;">
+                <tr><td width="30%">Penceramah</td><td id="out_penceramah"></td></tr>
+                <tr><td>Tempat</td><td id="out_tempat"></td></tr>
+                <tr>
+                    <td colspan="2" style="height:100px; vertical-align:top;">
+                        <strong>Ringkasan:</strong><br>
+                        <span id="out_ceramah"></span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="sheet-sig-area">
+            <div class="sheet-sig-box">
+                <p>Mengetahui,</p>
+                <p>Orang Tua / Wali</p>
+                <!-- Image source will be filled by JS -->
+                <img id="out_img_ortu" class="sheet-sig-img" src="" alt="">
+                <p style="border-top:1px solid transparent;" id="out_sig_name_ortu">............................</p>
+            </div>
+            <div class="sheet-sig-box">
+                <p>Sukabumi, <span id="out_tgl_ttd"></span></p>
+                <p>Siswa</p>
+                <img id="out_img_siswa" class="sheet-sig-img" src="" alt="">
+                <p id="out_sig_name_siswa" style="font-weight:bold; text-decoration:underline;"></p>
+            </div>
+        </div>
+
+        <div class="sheet-footer">
+            Laporan Kegiatan Ramadhan Siswa SMPN 2 CISOLOK<br>
+            Ditandatangani Secara Digital oleh Orang Tua & Murid | &copy; 2026
+        </div>
+    </div>
+
+    <!-- Modal Preview -->
+    <div id="previewModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h3 style="margin-bottom:15px; color:var(--primary);">Preview Laporan</h3>
+            <img id="previewImg" class="modal-img" src="" alt="Preview">
+            <br>
+            <a id="downloadLink" class="btn-download" href="#" download="laporan.jpg">Download Sheet (A4)</a>
+        </div>
+    </div>
+
+    <script>
+        // 1. Toggle Tadarus Input
+        function toggleTadarus(isShow) {
+            const detailDiv = document.getElementById('tadarus_detail');
+            const requiredFields = ['f_surat', 'f_ayat_start', 'f_ayat_end'];
+            
+            if (isShow) {
+                detailDiv.style.display = 'block';
+                requiredFields.forEach(id => document.getElementById(id).required = true);
+            } else {
+                detailDiv.style.display = 'none';
+                requiredFields.forEach(id => document.getElementById(id).required = false);
+            }
+        }
+
+        // 2. Canvas Setup
+        function setupCanvas(canvasId) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            let isDrawing = false;
+
+            // Resize canvas to fix resolution
+            function resize() {
+                const rect = canvas.getBoundingClientRect();
+                canvas.width = rect.width;
+                canvas.height = rect.height;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            function getPos(e) {
+                const rect = canvas.getBoundingClientRect();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                return {
+                    x: clientX - rect.left,
+                    y: clientY - rect.top
+                };
+            }
+
+            function startDraw(e) {
+                isDrawing = true;
+                draw(e);
+            }
+
+            function stopDraw() {
+                isDrawing = false;
+                ctx.beginPath();
+            }
+
+            function draw(e) {
+                if (!isDrawing) return;
+                e.preventDefault(); // Stop scrolling on mobile
+                const pos = getPos(e);
+                ctx.lineWidth = 2;
+                ctx.lineCap = 'round';
+                ctx.strokeStyle = '#000';
+
+                ctx.lineTo(pos.x, pos.y);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(pos.x, pos.y);
+            }
+
+            canvas.addEventListener('mousedown', startDraw);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDraw);
+            
+            canvas.addEventListener('touchstart', startDraw, {passive: false});
+            canvas.addEventListener('touchmove', draw, {passive: false});
+            canvas.addEventListener('touchend', stopDraw);
+        }
+
+        setupCanvas('canvas_siswa');
+        setupCanvas('canvas_ortu');
+
+        function clearCanvas(id) {
+            const canvas = document.getElementById(id);
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function isCanvasEmpty(canvas) {
+            const blank = document.createElement('canvas');
+            blank.width = canvas.width;
+            blank.height = canvas.height;
+            return canvas.toDataURL() === blank.toDataURL();
+        }
+
+        // 3. Generate Sheet Logic
+        function generateSheet() {
+            const form = document.getElementById('ramadhanForm');
+            
+            // Validasi HTML5 dasar
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            // Validasi Canvas
+            const cvsSiswa = document.getElementById('canvas_siswa');
+            const cvsOrtu = document.getElementById('canvas_ortu');
+            
+            if (isCanvasEmpty(cvsSiswa) || isCanvasEmpty(cvsOrtu)) {
+                alert("Mohon tanda tangan terlebih dahulu pada kolom yang tersedia.");
+                return;
+            }
+
+            document.getElementById('loading').style.display = 'block';
+
+            // --- Populate Hidden Template ---
+            
+            // A. Data Siswa
+            const namaSiswa = document.getElementById('f_nama').value;
+            const namaOrtu = document.getElementById('f_ortu').value;
+            document.getElementById('out_nama').textContent = namaSiswa;
+            document.getElementById('out_ortu').textContent = namaOrtu;
+            document.getElementById('out_kelas').textContent = document.getElementById('f_kelas').value;
+            
+            // Date Formatting
+            const dateVal = new Date(document.getElementById('f_tanggal').value);
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dateStr = dateVal.toLocaleDateString('id-ID', options);
+            document.getElementById('out_tanggal').textContent = dateStr;
+            document.getElementById('out_tgl_ttd').textContent = dateStr;
+            document.getElementById('out_hari').textContent = document.getElementById('f_hari').value;
+
+            // B. Sholat
+            const sholats = ['Subuh', 'Dzuhur', 'Ashar', 'Maghrib', 'Isya', 'Tarawih'];
+            sholats.forEach(s => {
+                const checked = document.querySelector(`input[name="sholat_${s}"]:checked`).value;
+                document.getElementById(`out_sholat_${s}`).textContent = checked;
+            });
+
+            // C & D. Sahur & Puasa
+            document.getElementById('out_sahur').textContent = document.querySelector('input[name="sahur"]:checked').value;
+            document.getElementById('out_puasa').textContent = document.querySelector('input[name="puasa"]:checked').value;
+
+            // E. Tadarus
+            const tadarusVal = document.querySelector('input[name="tadarus"]:checked').value;
+            document.getElementById('out_tadarus').textContent = tadarusVal;
+            
+            if (tadarusVal === 'Iya') {
+                const s = document.getElementById('f_surat').value;
+                const a1 = document.getElementById('f_ayat_start').value;
+                const a2 = document.getElementById('f_ayat_end').value;
+                document.getElementById('out_detail_tadarus').textContent = `${s} (Ayat ${a1}-${a2})`;
+            } else {
+                document.getElementById('out_detail_tadarus').textContent = "-";
+            }
+
+            // F. Ceramah
+            document.getElementById('out_penceramah').textContent = document.getElementById('f_penceramah').value || '-';
+            document.getElementById('out_tempat').textContent = document.getElementById('f_tempat').value || '-';
+            document.getElementById('out_ceramah').textContent = document.getElementById('f_ceramah').value || '-';
+
+            // G. Signatures & Names
+            document.getElementById('out_img_siswa').src = cvsSiswa.toDataURL('image/png');
+            document.getElementById('out_sig_name_siswa').textContent = namaSiswa;
+            
+            document.getElementById('out_img_ortu').src = cvsOrtu.toDataURL('image/png');
+            document.getElementById('out_sig_name_ortu').textContent = `( ${namaOrtu} )`;
+
+            // --- Convert to Image using html2canvas ---
+            const element = document.getElementById("sheet-report");
+            
+            html2canvas(element, {
+                scale: 2, // High resolution
+                useCORS: true // Allow loading external images
+            }).then(canvas => {
+                const imgData = canvas.toDataURL("image/jpeg", 0.9);
+                
+                // Show Modal
+                const modal = document.getElementById('previewModal');
+                const previewImg = document.getElementById('previewImg');
+                const dlLink = document.getElementById('downloadLink');
+
+                previewImg.src = imgData;
+                dlLink.href = imgData;
+                dlLink.download = `Laporan_Ramadhan_${namaSiswa.replace(/\s+/g, '_')}_Hari_${document.getElementById('f_hari').value}.jpg`;
+                
+                document.getElementById('loading').style.display = 'none';
+                modal.style.display = 'flex';
+            }).catch(err => {
+                console.error(err);
+                alert("Terjadi kesalahan saat membuat laporan.");
+                document.getElementById('loading').style.display = 'none';
+            });
+        }
+
+        function closeModal() {
+            document.getElementById('previewModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('previewModal');
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>
